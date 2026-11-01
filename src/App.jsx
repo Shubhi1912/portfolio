@@ -124,7 +124,7 @@ function App() {
     <section className="hero shell" id="top">
       <div className="hero-copy">
         <p className="eyebrow"><span className="eyebrow-line" /> DEVELOPER • 3D ARTIST • CREATIVE MAKER</p>
-        <h1>Hello, I’m<br /><em>Shubhnit.</em><span className="period">✳</span></h1>
+        <h1>Hello, I’m<br /><em>Shubhnit Singhal.</em><span className="period">✳</span></h1>
         <p className="hero-intro">I build with code, shape ideas in 3D, edit stories into motion and experiment with games.</p>
         <p className="hero-sub">Python & C development / Blender 3D / Video editing / Game design</p>
         <div className="hero-cta"><a className="button button-dark" href="#projects">EXPLORE MY WORK <ArrowDownRight size={16} /></a><span className="hero-note">A WORK IN PROGRESS — ALWAYS.</span></div>
@@ -202,7 +202,7 @@ function App() {
       <div className="contact-top"><span>HAVE AN IDEA OR A PROJECT?</span><span>LET’S MAKE SOMETHING MEANINGFUL ↗</span></div>
       <p className="eyebrow"><span className="eyebrow-line" /> OPEN FOR CONVERSATION</p><h2>Let’s make<br /><em>something great.</em></h2>
       <a className="contact-link" href="mailto:YOUR.EMAIL@example.com">YOUR.EMAIL@example.com <MoveUpRight size={19} /></a>
-      <div className="contact-bottom"><span>BASED IN YOUR CITY</span><span>© 2026 SHUBHNIT SINGHAL</span><span>BUILT WITH CURIOSITY <Asterisk size={14} /></span></div>
+      <div className="contact-bottom"><span>NEW DELHI, INDIA</span><span>© 2026 SHUBHNIT SINGHAL</span><span>BUILT WITH CURIOSITY <Asterisk size={14} /></span></div>
     </div></section>
     <footer className="footer shell"><span>SS® — DIGITAL WORKSHOP</span><a href="#top">BACK TO TOP ↑</a><span>DESIGNED TO EXPLORE.</span></footer>
   </main>
