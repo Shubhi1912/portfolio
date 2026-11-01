@@ -114,7 +114,7 @@ function App() {
   return <main ref={root}>
     <div className="grain" />
     <nav className="nav shell">
-      <a className="wordmark" href="#top">SS<span>®</span></a>
+      <a className="wordmark" href="#top">PHANTOMYX.GLITCH<span>®</span></a>
       <div className="nav-links">
         <a href="#top">HOME</a><a href="#about">ABOUT</a><a href="#work">3D MODELS</a><a href="#projects">PROJECTS</a><a href="#skills">SKILLS</a><a href="#contact">CONTACT <ArrowUpRight size={13} /></a>
       </div>
@@ -201,7 +201,7 @@ function App() {
     <section className="contact-section shell" id="contact"><div className="contact-card reveal">
       <div className="contact-top"><span>HAVE AN IDEA OR A PROJECT?</span><span>LET’S MAKE SOMETHING MEANINGFUL ↗</span></div>
       <p className="eyebrow"><span className="eyebrow-line" /> OPEN FOR CONVERSATION</p><h2>Let’s make<br /><em>something great.</em></h2>
-      <a className="contact-link" href="mailto:YOUR.EMAIL@example.com">YOUR.EMAIL@example.com <MoveUpRight size={19} /></a>
+      <a className="contact-link" href="mailto:singhalshubhnit@gmail.com">singhalshubhnit@gmail.com <MoveUpRight size={19} /></a>
       <div className="contact-bottom"><span>NEW DELHI, INDIA</span><span>© 2026 SHUBHNIT SINGHAL</span><span>BUILT WITH CURIOSITY <Asterisk size={14} /></span></div>
     </div></section>
     <footer className="footer shell"><span>SS® — DIGITAL WORKSHOP</span><a href="#top">BACK TO TOP ↑</a><span>DESIGNED TO EXPLORE.</span></footer>
