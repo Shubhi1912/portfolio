@@ -114,7 +114,7 @@ function App() {
   return <main ref={root}>
     <div className="grain" />
     <nav className="nav shell">
-      <a className="wordmark" href="#top">PHANTOMYX.GLITCH<span>®</span></a>
+      <a className="wordmark" href="#top">SS<span>®</span></a>
       <div className="nav-links">
         <a href="#top">HOME</a><a href="#about">ABOUT</a><a href="#work">3D MODELS</a><a href="#projects">PROJECTS</a><a href="#skills">SKILLS</a><a href="#contact">CONTACT <ArrowUpRight size={13} /></a>
       </div>
