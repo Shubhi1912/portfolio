@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
-import { OrbitControls, Float, Environment, ContactShadows, useGLTF} from '@react-three/drei'
+import { Canvas } from '@react-three/fiber'
+import { OrbitControls, Float, Environment, ContactShadows } from '@react-three/drei'
 import { ArrowDownRight, ArrowUpRight, Code2, Clapperboard, Gamepad2, Box, Terminal, Sparkles, Asterisk, MoveUpRight } from 'lucide-react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -21,9 +21,67 @@ const projects = [
 ]
 
 function Model({ type }) {
-  const { scene } = useGLTF('/models/Main_CosmicPunk-copy.glb')
+  return (
+    <group>
+      {type === 'orbital' && (
+        <>
+          <mesh>
+            <icosahedronGeometry args={[1, 2]} />
+            <meshStandardMaterial
+              color="#7189a8"
+              metalness={0.8}
+              roughness={0.3}
+              wireframe
+            />
+          </mesh>
 
-  return <primitive object={scene} />
+          <mesh rotation={[0.7, 0.3, 0]}>
+            <torusGeometry args={[1.35, 0.025, 16, 100]} />
+            <meshStandardMaterial color="#d5a75f" metalness={0.8} />
+          </mesh>
+        </>
+      )}
+
+      {type === 'form' && (
+        <>
+          <mesh rotation={[0.5, 0.5, 0.2]}>
+            <dodecahedronGeometry args={[1, 0]} />
+            <meshStandardMaterial
+              color="#b58a72"
+              metalness={0.5}
+              roughness={0.35}
+            />
+          </mesh>
+
+          <mesh rotation={[0.5, 0.5, 0]}>
+            <torusGeometry args={[1.3, 0.035, 16, 100]} />
+            <meshStandardMaterial color="#7189a8" />
+          </mesh>
+        </>
+      )}
+
+      {type === 'kinetic' && (
+        <>
+          <mesh rotation={[0.5, 0.5, 0]}>
+            <torusKnotGeometry args={[0.75, 0.22, 120, 16]} />
+            <meshStandardMaterial
+              color="#9a86b5"
+              metalness={0.75}
+              roughness={0.25}
+            />
+          </mesh>
+
+          <mesh position={[0, 0, 0.8]}>
+            <sphereGeometry args={[0.18, 32, 32]} />
+            <meshStandardMaterial
+              color="#e1bd79"
+              metalness={0.7}
+            />
+          </mesh>
+        </>
+      )}
+    </group>
+  )
 }
 
 function ModelViewer({ type }) {
@@ -73,7 +131,10 @@ function App() {
         <div className="hero-badges"><span><Code2 /> CODE</span><span><Box /> 3D ART</span><span><Clapperboard /> VIDEO</span><span><Gamepad2 /> GAMES</span></div>
       </div>
       <div className="hero-visual">
-        <img src="/images/retro-workstation.png" alt="Illustrated retro computer workstation and creative desk" />
+        <img
+          src={`${import.meta.env.BASE_URL}images/retro-workstation.png`}
+          alt="Illustrated retro computer workstation and creative desk"
+        />
         <div className="hero-sticker sticker-top">IDEAS<br />IN PROGRESS ✳</div>
         <div className="hero-sticker sticker-bottom">SS / DIGITAL<br />WORKSHOP — 2026</div>
         <span className="hero-visual-caption">FIG. 001 — THE CREATIVE WORKBENCH</span>
@@ -81,12 +142,15 @@ function App() {
       <div className="hero-bottom"><span>PORTFOLIO / 2026</span><span>CODE • DESIGN • MOTION • PLAY</span><span>SCROLL ↓</span></div>
     </section>
 
-    <div className="ticker"><div className="ticker-track">{Array.from({length:4}).map((_,i)=><span key={i}>PYTHON DEVELOPMENT <Asterisk/> C PROGRAMMING <Asterisk/> BLENDER 3D <Asterisk/> VIDEO EDITING <Asterisk/> GAME DESIGN <Asterisk/></span>)}</div></div>
+    <div className="ticker"><div className="ticker-track">{Array.from({ length: 4 }).map((_, i) => <span key={i}>PYTHON DEVELOPMENT <Asterisk /> C PROGRAMMING <Asterisk /> BLENDER 3D <Asterisk /> VIDEO EDITING <Asterisk /> GAME DESIGN <Asterisk /></span>)}</div></div>
 
     <section className="about-section" id="about">
       <div className="shell about-grid">
-        <div className="about-heading reveal"><p className="eyebrow"><span className="eyebrow-line"/> ABOUT THE MAKER / 001</p><h2>Many tools.<br /><em>One curious mind.</em></h2>
-          <div className="about-image"><img src="/images/retro-creative-collage.png" alt="Retro-inspired collage of creative tools, computers and illustrations" /><span>THE STUDIO / A VISUAL MOODBOARD</span></div>
+        <div className="about-heading reveal"><p className="eyebrow"><span className="eyebrow-line" /> ABOUT THE MAKER / 001</p><h2>Many tools.<br /><em>One curious mind.</em></h2>
+          <div className="about-image"><img
+            src={`${import.meta.env.BASE_URL}images/retro-creative-collage.png`}
+            alt="Retro-inspired collage of creative tools, computers and illustrations"
+          /><span>THE STUDIO / A VISUAL MOODBOARD</span></div>
         </div>
         <div className="about-copy reveal">
           <p className="about-lead">I’m Shubhnit — a student, developer and creative enthusiast who enjoys turning ideas into things people can use, explore and experience.</p>
@@ -104,26 +168,26 @@ function App() {
     </section>
 
     <section className="work-section shell" id="work">
-      <div className="section-heading reveal"><div><p className="eyebrow"><span className="eyebrow-line"/> 3D GALLERY / 001—003</p><h2>Objects in <em>orbit.</em></h2></div><p className="section-aside">Three featured Blender studies.<br />Drag, rotate and explore.</p></div>
-      <div className="project-list">{models.map(m=><article className="project-card reveal" key={m.number}>
+      <div className="section-heading reveal"><div><p className="eyebrow"><span className="eyebrow-line" /> 3D GALLERY / 001—003</p><h2>Objects in <em>orbit.</em></h2></div><p className="section-aside">Three featured Blender studies.<br />Drag, rotate and explore.</p></div>
+      <div className="project-list">{models.map(m => <article className="project-card reveal" key={m.number}>
         <div className="project-meta"><span>{m.number} / 03</span><span>{m.category}</span></div>
-        <ModelViewer type={m.type}/>
+        <ModelViewer type={m.type} />
         <div className="project-info"><div><h3>{m.title}</h3><p>{m.description}</p></div><span className="project-year">{m.year}</span></div>
       </article>)}</div>
-      <div className="coming-soon reveal"><div className="coming-symbol"><Sparkles size={23}/></div><div><p className="eyebrow">MORE IN THE WORKSHOP</p><h3>New models are <em>loading.</em></h3><p>More environments, characters and product concepts will be added here.</p></div><span className="loading-bars"><i/><i/><i/><i/><i/></span></div>
+      <div className="coming-soon reveal"><div className="coming-symbol"><Sparkles size={23} /></div><div><p className="eyebrow">MORE IN THE WORKSHOP</p><h3>New models are <em>loading.</em></h3><p>More environments, characters and product concepts will be added here.</p></div><span className="loading-bars"><i /><i /><i /><i /><i /></span></div>
     </section>
 
     <section className="projects-section" id="projects"><div className="shell">
-      <div className="section-heading reveal"><div><p className="eyebrow"><span className="eyebrow-line"/> PROJECT ARCHIVE / 002</p><h2>Built, cut & <em>played.</em></h2></div><p className="section-aside">A growing archive across<br />code, motion and games.</p></div>
-      <div className="project-grid">{projects.map((p,i)=><article className="work-tile reveal" key={p.type}>
-        <div className={`tile-art ${p.type}`}><span className="tile-icon">{p.icon}</span><span className="tile-number">0{i+1}</span><span className="tile-doodle">✳</span></div>
-        <div className="tile-content"><div className="tile-type">{p.title}<span>{p.tag}</span></div><h3>{p.name}</h3><p>{p.text}</p><a href="#contact">PROJECT DETAILS <ArrowUpRight size={13}/></a></div>
+      <div className="section-heading reveal"><div><p className="eyebrow"><span className="eyebrow-line" /> PROJECT ARCHIVE / 002</p><h2>Built, cut & <em>played.</em></h2></div><p className="section-aside">A growing archive across<br />code, motion and games.</p></div>
+      <div className="project-grid">{projects.map((p, i) => <article className="work-tile reveal" key={p.type}>
+        <div className={`tile-art ${p.type}`}><span className="tile-icon">{p.icon}</span><span className="tile-number">0{i + 1}</span><span className="tile-doodle">✳</span></div>
+        <div className="tile-content"><div className="tile-type">{p.title}<span>{p.tag}</span></div><h3>{p.name}</h3><p>{p.text}</p><a href="#contact">PROJECT DETAILS <ArrowUpRight size={13} /></a></div>
       </article>)}
-      <article className="work-tile more-tile reveal"><div className="more-art"><Sparkles size={35}/><span>IN THE MAKING</span></div><div className="tile-content"><div className="tile-type">NEXT RELEASE <span>SOON</span></div><h3>More projects coming.</h3><p>New code experiments, edits and playable ideas will appear here.</p><a href="#contact">CHECK BACK SOON <ArrowUpRight size={13}/></a></div></article></div>
+        <article className="work-tile more-tile reveal"><div className="more-art"><Sparkles size={35} /><span>IN THE MAKING</span></div><div className="tile-content"><div className="tile-type">NEXT RELEASE <span>SOON</span></div><h3>More projects coming.</h3><p>New code experiments, edits and playable ideas will appear here.</p><a href="#contact">CHECK BACK SOON <ArrowUpRight size={13} /></a></div></article></div>
     </div></section>
 
     <section className="skills-section shell" id="skills">
-      <div className="skills-heading reveal"><p className="eyebrow"><span className="eyebrow-line"/> THE TOOLBOX / 003</p><h2>Tools of the <em>trade.</em></h2><p>Technologies and creative tools I use, practise and continue to explore.</p></div>
+      <div className="skills-heading reveal"><p className="eyebrow"><span className="eyebrow-line" /> THE TOOLBOX / 003</p><h2>Tools of the <em>trade.</em></h2><p>Technologies and creative tools I use, practise and continue to explore.</p></div>
       <div className="tool-grid reveal">
         <div><span className="tool-symbol python">Py</span><b>Python</b><small>Programming</small></div>
         <div><span className="tool-symbol clang">C</span><b>C</b><small>Programming</small></div>
@@ -136,9 +200,9 @@ function App() {
 
     <section className="contact-section shell" id="contact"><div className="contact-card reveal">
       <div className="contact-top"><span>HAVE AN IDEA OR A PROJECT?</span><span>LET’S MAKE SOMETHING MEANINGFUL ↗</span></div>
-      <p className="eyebrow"><span className="eyebrow-line"/> OPEN FOR CONVERSATION</p><h2>Let’s make<br /><em>something great.</em></h2>
-      <a className="contact-link" href="mailto:YOUR.EMAIL@example.com">YOUR.EMAIL@example.com <MoveUpRight size={19}/></a>
-      <div className="contact-bottom"><span>BASED IN YOUR CITY</span><span>© 2026 SHUBHNIT SINGHAL</span><span>BUILT WITH CURIOSITY <Asterisk size={14}/></span></div>
+      <p className="eyebrow"><span className="eyebrow-line" /> OPEN FOR CONVERSATION</p><h2>Let’s make<br /><em>something great.</em></h2>
+      <a className="contact-link" href="mailto:YOUR.EMAIL@example.com">YOUR.EMAIL@example.com <MoveUpRight size={19} /></a>
+      <div className="contact-bottom"><span>BASED IN YOUR CITY</span><span>© 2026 SHUBHNIT SINGHAL</span><span>BUILT WITH CURIOSITY <Asterisk size={14} /></span></div>
     </div></section>
     <footer className="footer shell"><span>SS® — DIGITAL WORKSHOP</span><a href="#top">BACK TO TOP ↑</a><span>DESIGNED TO EXPLORE.</span></footer>
   </main>
