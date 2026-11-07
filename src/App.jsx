@@ -1,55 +1,160 @@
-import React, { Suspense, useEffect, useRef, useState } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
-import { OrbitControls, Float, Environment } from '@react-three/drei'
-import { ArrowDown, ArrowUpRight, ArrowLeft, Code2, Box, Clapperboard, Gamepad2, MoveUpRight, Plus, X, Menu, Sparkles, MousePointer2, Layers } from 'lucide-react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { ArrowUpRight, Menu, X } from 'lucide-react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import Lenis from 'lenis'
+import { projects, BASE_TITLE, SECTIONS, ACCENTS } from './data'
+import { installPointerFx, prefersReducedMotion, scroller, scrollToTarget, sceneState } from './lib/pointer'
+import { burst, glitch } from './lib/fx'
+import { Cursor, TouchGlass } from './components/Cursor'
+import { Terminal } from './components/Terminal'
+import { Hero } from './components/Hero'
+import { Marquee } from './components/Marquee'
+import { About, Work, Projects, Toolkit, Footer } from './components/Sections'
+import { Contact } from './components/Contact'
+import { CasePage } from './components/CasePage'
 
 gsap.registerPlugin(ScrollTrigger)
-const asset = (name) => `${import.meta.env.BASE_URL}images/${name}`
 
-const projects = [
-  { id: 'python', no: '01', category: 'SOFTWARE / PYTHON', title: 'School helpdesk', subtitle: 'A small tool with a practical purpose.', description: 'A Python-based school helpdesk chatbot experiment. This case-study space is ready for the problem, approach, interface, code decisions and lessons learned to be documented as the project develops.', stack: ['Python', 'NLTK', 'CustomTkinter'], accent: 'mint', mark: 'Py', status: 'EXPERIMENT' },
-  { id: 'c', no: '02', category: 'PROGRAMMING / C', title: 'Logic in motion', subtitle: 'Learning to think close to the machine.', description: 'A collection of C programming exercises and small console experiments focused on fundamentals: input, control flow, arrays, functions and problem-solving. Add a specific finished program and its source link here when ready.', stack: ['C', 'Problem solving', 'Terminal'], accent: 'blue', mark: 'C', status: 'LEARNING LOG' },
-  { id: 'motion', no: '03', category: 'MOTION / VIDEO', title: 'Frames & feeling', subtitle: 'Editing ideas into a visual rhythm.', description: 'A home for selected video edits. Document the creative brief, pacing, transitions, sound choices and editing process here. Replace this preview with a still or embedded video when you have a final piece to share.', stack: ['DaVinci Resolve', 'Editing', 'Storytelling'], accent: 'orange', mark: '▶', status: 'SHOWREEL SLOT' },
-  { id: 'game', no: '04', category: 'INTERACTIVE / GAME DESIGN', title: 'Playful systems', subtitle: 'Mechanics, rules and little worlds.', description: 'An evolving space for game concepts and interactive prototypes. Add the core loop, rules, player choices, visual direction and a playable build when a project is ready to be presented.', stack: ['Game design', 'Prototyping', 'Systems'], accent: 'violet', mark: 'PLAY', status: 'IN DEVELOPMENT' },
-]
-const models = [
-  { type: 'orbital', label: 'ORBITAL STUDY', note: 'A sculptural form exploring scale and atmosphere.' },
-  { type: 'form', label: 'FORM / MATTER', note: 'A study of silhouette, material and studio light.' },
-  { type: 'kinetic', label: 'KINETIC OBJECT', note: 'A conceptual object built around rhythm and motion.' },
-]
-function Model({ type }) {
-  const ref = useRef()
-  useFrame((_, d) => { if (ref.current) ref.current.rotation.y += d * .13 })
-  return <group ref={ref}>
-    {type === 'orbital' && <><mesh><icosahedronGeometry args={[1, 2]} /><meshStandardMaterial color="#a9b9ae" roughness={.36} metalness={.25} flatShading /></mesh><mesh rotation={[.8, .2, .25]}><torusGeometry args={[1.4, .035, 12, 120]} /><meshStandardMaterial color="#d0a16f" metalness={.7} roughness={.25} /></mesh><mesh position={[1.12, .5, .1]}><sphereGeometry args={[.16, 32, 32]} /><meshStandardMaterial color="#e8d8b8" metalness={.5} /></mesh></>}
-    {type === 'form' && <><mesh rotation={[.3, .3, 0]}><torusKnotGeometry args={[.72, .23, 180, 24, 2, 5]} /><meshStandardMaterial color="#c88767" roughness={.3} metalness={.35} /></mesh><mesh position={[0, -1.12, 0]}><cylinderGeometry args={[.9, .9, .18, 64]} /><meshStandardMaterial color="#d8cfba" roughness={.7} /></mesh></>}
-    {type === 'kinetic' && <><mesh rotation={[.4, .4, .2]}><torusGeometry args={[.76, .17, 24, 100]} /><meshStandardMaterial color="#829ca8" metalness={.65} roughness={.28} /></mesh><mesh rotation={[1.2, .2, .7]}><torusGeometry args={[1.1, .045, 16, 100]} /><meshStandardMaterial color="#d0a16f" metalness={.72} /></mesh><mesh><octahedronGeometry args={[.45, 1]} /><meshStandardMaterial color="#ded5c0" roughness={.25} metalness={.3} /></mesh></>}
-  </group>
+const NAV = [['about', 'ABOUT'], ['work', 'EXPERIMENTS'], ['projects', 'SELECTED WORK'], ['toolkit', 'TOOLKIT']]
+const KONAMI = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a']
+const fromHash = () => {
+  const m = window.location.hash.match(/^#project-([\w-]+)/)
+  return m ? projects.find((p) => p.id === m[1]) || null : null
 }
-function ModelViewer({ model, index }) {
-  return <div className={`model-stage model-${index}`}><Canvas camera={{ position: [0, 0, 4.1], fov: 43 }} dpr={[1, 1.5]}><ambientLight intensity={1.15} /><directionalLight position={[3, 4, 5]} intensity={2} /><pointLight position={[-3, -2, -2]} intensity={1.1} color="#9caed0" /><Suspense fallback={null}><Float speed={1.1} rotationIntensity={.12} floatIntensity={.2}><Model type={model.type} /></Float><Environment preset="city" /></Suspense><OrbitControls enablePan={false} minDistance={3} maxDistance={5.8} /></Canvas><span className="model-hint">DRAG TO ROTATE ↗</span></div>
+const setCurrentLink = (id) => {
+  document.querySelectorAll('.nav-links a[data-target]').forEach((a) => {
+    if (a.dataset.target === id) a.setAttribute('data-current', 'true')
+    else a.removeAttribute('data-current')
+  })
 }
-function App() {
-  const root = useRef(null), intro = useRef(null), [active, setActive] = useState(null), [menuOpen, setMenuOpen] = useState(false), [introDone, setIntroDone] = useState(false), [activeFilter, setActiveFilter] = useState('ALL')
+
+export default function App() {
+  const root = useRef(null)
+  const curtain = useRef(null)
+  const busy = useRef(false)
+  const pending = useRef(null)
+  const taps = useRef({ n: 0, t: 0 })
+  const [active, setActive] = useState(fromHash)
+  const activeRef = useRef(active)
+  activeRef.current = active
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [introDone, setIntroDone] = useState(false)
+  const [filter, setFilter] = useState('ALL')
+  const [termOpen, setTermOpen] = useState(false)
+  const prevFilter = useRef(filter)
+
+  /* ── device flags (touch / iOS) ─────────────────────────────── */
   useEffect(() => {
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const ctx = gsap.context(() => {
-      if (!reduce && !introDone) {
-        const tl = gsap.timeline({ onComplete: () => { setIntroDone(true); document.body.classList.remove('intro-lock') } })
-        document.body.classList.add('intro-lock')
-        tl.to('.boot-line', { scaleX: 1, duration: .55, ease: 'power2.inOut' })
-          .to('.boot-counter', { opacity: 1, duration: .2 }, '-=.2')
-          .to('.intro-screen', { clipPath: 'inset(0 0 100% 0)', duration: .9, ease: 'power4.inOut', delay: .25 })
-          .from('.hero-kicker, .hero-title, .hero-description, .hero-actions, .hero-art', { y: 30, opacity: 0, duration: .8, stagger: .1, ease: 'power3.out' }, '-=.45')
-      } else { setIntroDone(true); gsap.set('.intro-screen', { display: 'none' }) }
-      gsap.utils.toArray('.reveal').forEach(el => gsap.fromTo(el, { y: 38, opacity: 0 }, { y: 0, opacity: 1, duration: .85, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 88%', once: true } }))
-      gsap.to('.hero-art', { yPercent: 8, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } })
-    }, root)
-    return () => { ctx.revert(); document.body.classList.remove('intro-lock') }
+    const html = document.documentElement
+    const touch = window.matchMedia('(hover: none), (pointer: coarse)').matches
+    const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+    html.classList.toggle('touch-device', touch)
+    html.classList.toggle('ios-device', ios)
   }, [])
 
+  /* ── smooth inertial scrolling (Lenis, driven by GSAP's ticker) ── */
+  useEffect(() => {
+    if (prefersReducedMotion()) return
+    const lenis = new Lenis({ lerp: 0.085, wheelMultiplier: 0.95, smoothWheel: true, autoRaf: false })
+    scroller.lenis = lenis
+    lenis.on('scroll', ScrollTrigger.update)
+    const tick = (t) => lenis.raf(t * 1000)
+    gsap.ticker.add(tick)
+    gsap.ticker.lagSmoothing(0)
+    return () => {
+      gsap.ticker.remove(tick)
+      gsap.ticker.lagSmoothing(500, 33)
+      lenis.destroy()
+      scroller.lenis = null
+    }
+  }, [])
+
+  /* ── pointer physics, spotlight, tilt, magnets ──────────────── */
+  useEffect(() => installPointerFx(), [])
+
+  /* ── cinematic intro → hero entrance ────────────────────────── */
+  useEffect(() => {
+    const finish = () => {
+      setIntroDone(true)
+      document.body.classList.remove('intro-lock')
+      if (scroller.lenis) scroller.lenis.start()
+      ScrollTrigger.refresh()
+    }
+    const ctx = gsap.context(() => {
+      if (prefersReducedMotion() || !document.querySelector('.intro-screen')) {
+        gsap.set('.intro-screen', { display: 'none' })
+        finish()
+        return
+      }
+      document.body.classList.add('intro-lock')
+      if (scroller.lenis) scroller.lenis.stop()
+      const counter = { v: 0 }
+      const num = document.querySelector('.boot-num')
+      const bar = document.querySelector('.boot-line')
+      const chars = gsap.utils.toArray('.k-char')
+      const bits = gsap.utils.toArray('.hero-kicker, .hero-description, .hero-actions, .hero-hud > *, .hero-index > *')
+      gsap.set(chars, { yPercent: 115 })
+      gsap.set(bits, { opacity: 0, y: 24 })
+
+      gsap.timeline({ onComplete: finish })
+        .from('.intro-mark .ch', { yPercent: 110, duration: 0.9, stagger: 0.08, ease: 'power4.out' })
+        .from('.intro-meta > *, .intro-tag, .boot-readout', { opacity: 0, y: 8, duration: 0.6, stagger: 0.06 }, '-=0.5')
+        .to(counter, {
+          v: 100, duration: 1.5, ease: 'power2.inOut',
+          onUpdate: () => {
+            if (num) num.textContent = String(Math.round(counter.v)).padStart(3, '0')
+            if (bar) bar.style.transform = `scaleX(${counter.v / 100})`
+          },
+        }, 0.2)
+        .to('.intro-mark .ch', { yPercent: -110, duration: 0.6, stagger: 0.05, ease: 'power3.in' }, '+=0.15')
+        .to('.intro-screen', { clipPath: 'inset(0 0 100% 0)', duration: 1, ease: 'power4.inOut' }, '-=0.15')
+        .to(chars, { yPercent: 0, duration: 1.1, stagger: 0.035, ease: 'expo.out' }, '-=0.55')
+        .to(bits, { opacity: 1, y: 0, duration: 0.9, stagger: 0.07, ease: 'power3.out', clearProps: 'transform,opacity' }, '-=0.8')
+        .set('.intro-screen', { display: 'none' })
+    }, root)
+    return () => {
+      ctx.revert()
+      document.body.classList.remove('intro-lock')
+      if (scroller.lenis) scroller.lenis.start()
+    }
+  }, [])
+
+  /* ── scroll-driven reveals (re-run whenever the page view changes) ── */
+  useEffect(() => {
+    const reduce = prefersReducedMotion()
+    const q = (sel) => gsap.utils.toArray(sel, root.current)
+    const ctx = gsap.context(() => {
+      if (!reduce) {
+        q('[data-reveal]').forEach((el) => gsap.fromTo(el, { y: 36, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9, ease: 'power3.out', clearProps: 'transform,opacity', scrollTrigger: { trigger: el, start: 'top 90%', once: true } }))
+        q('[data-split]').forEach((h) => gsap.from(h.querySelectorAll('.wi'), { yPercent: 115, duration: 1, stagger: 0.06, ease: 'expo.out', scrollTrigger: { trigger: h, start: 'top 88%', once: true } }))
+        q('[data-clip]').forEach((el) => gsap.fromTo(el, { clipPath: 'inset(0 0 100% 0)' }, { clipPath: 'inset(0 0 0% 0)', duration: 1.2, ease: 'power4.inOut', clearProps: 'clipPath', scrollTrigger: { trigger: el, start: 'top 90%', once: true } }))
+        q('[data-parallax]').forEach((el) => gsap.fromTo(el, { yPercent: -7 }, { yPercent: 7, ease: 'none', scrollTrigger: { trigger: el.parentElement, start: 'top bottom', end: 'bottom top', scrub: true } }))
+        q('[data-stagger]').forEach((g) => gsap.from(g.children, { y: 40, opacity: 0, duration: 0.8, stagger: 0.08, ease: 'power3.out', clearProps: 'transform,opacity', scrollTrigger: { trigger: g, start: 'top 88%', once: true } }))
+        const hero = root.current.querySelector('.hero')
+        const stage = root.current.querySelector('.hero-stage')
+        if (hero && stage) gsap.to(stage, { yPercent: 10, ease: 'none', scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true } })
+      }
+      SECTIONS.forEach((id) => {
+        const el = document.getElementById(id)
+        if (el) ScrollTrigger.create({ trigger: el, start: 'top 55%', end: 'bottom 55%', onToggle: (s) => { if (s.isActive) setCurrentLink(id) } })
+      })
+    }, root)
+    ScrollTrigger.refresh()
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => ScrollTrigger.refresh())
+    return () => ctx.revert()
+  }, [active])
+
+  /* ── animate project tiles when the filter changes ───────────── */
+  useEffect(() => {
+    if (prevFilter.current === filter) return
+    prevFilter.current = filter
+    if (prefersReducedMotion()) return
+    gsap.fromTo(gsap.utils.toArray('.project-tile'), { opacity: 0, y: 40, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, stagger: 0.09, ease: 'expo.out', clearProps: 'opacity,transform' })
+    ScrollTrigger.refresh()
+  }, [filter])
+
+  /* ── scroll progress bar ─────────────────────────────────────── */
   useEffect(() => {
     const bar = document.querySelector('.scroll-progress span')
     if (!bar) return
@@ -63,70 +168,159 @@ function App() {
     return () => { window.removeEventListener('scroll', update); window.removeEventListener('resize', update) }
   }, [])
 
+  /* ── page transition curtain ─────────────────────────────────── */
+  const transition = useCallback((mid, { color = '#252720', label = '' } = {}) => {
+    if (busy.current) return
+    const run = () => { try { mid() } catch (err) { console.error(err) } scrollToTarget(0, { immediate: true }) }
+    const el = curtain.current
+    if (prefersReducedMotion() || !el) { run(); return }
+    busy.current = true
+    const lab = el.querySelector('.curtain-label')
+    lab.textContent = label
+    el.style.setProperty('--c', color)
+    el.style.setProperty('--t', color === '#252720' ? '#eeeadd' : '#252720')
+    gsap.timeline({ onComplete: () => { gsap.set(el, { display: 'none' }); busy.current = false } })
+      .set(el, { display: 'grid', clipPath: 'inset(100% 0 0 0)' })
+      .to(el, { clipPath: 'inset(0% 0 0 0)', duration: 0.7, ease: 'power4.inOut' })
+      .fromTo(lab, { yPercent: 60, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.6, ease: 'expo.out' }, '-=0.25')
+      .add(run)
+      .to(lab, { yPercent: -60, opacity: 0, duration: 0.45, ease: 'power3.in' }, '+=0.35')
+      .to(el, { clipPath: 'inset(0 0 100% 0)', duration: 0.8, ease: 'power4.inOut' }, '-=0.2')
+  }, [])
+
+  const openProject = useCallback((p) => {
+    transition(() => { setActive(p); history.pushState(null, '', `#project-${p.id}`) }, { color: p.color, label: `${p.no} — ${p.title}` })
+  }, [transition])
+
+  const closeProject = useCallback(() => {
+    pending.current = pending.current || 'projects'
+    transition(() => { setActive(null); history.replaceState(null, '', '#projects') }, { color: '#252720', label: 'Back to the portfolio' })
+  }, [transition])
+
+  const goTo = useCallback((id) => {
+    setMenuOpen(false)
+    if (activeRef.current) { pending.current = id; closeProject(); return }
+    scrollToTarget(id === 'top' ? 0 : `#${id}`)
+  }, [closeProject])
+
+  const go = (id) => (e) => { e.preventDefault(); goTo(id) }
+
+  /* title + deferred scroll after leaving a case file */
   useEffect(() => {
-    const isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches
-    const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
-    document.documentElement.classList.toggle('touch-device', isTouch)
-    document.documentElement.classList.toggle('ios-device', isIOS)
-    if (isTouch || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    const cursor = document.querySelector('.cursor-orb')
-    if (!cursor) return
-    let tx = window.innerWidth / 2, ty = window.innerHeight / 2, x = tx, y = ty, raf = 0
-    const move = e => { tx = e.clientX; ty = e.clientY; cursor.classList.add('is-visible') }
-    const leave = () => cursor.classList.remove('is-visible')
-    const tick = () => {
-      x += (tx - x) * .16; y += (ty - y) * .16
-      cursor.style.transform = `translate3d(${x}px,${y}px,0) translate(-50%,-50%)`
-      raf = requestAnimationFrame(tick)
+    document.title = active ? `${active.title} — Shubhnit` : BASE_TITLE
+    if (active || !pending.current) return
+    const id = pending.current
+    pending.current = null
+    const t = setTimeout(() => {
+      ScrollTrigger.refresh()
+      scrollToTarget(id === 'top' ? 0 : `#${id}`, { immediate: true })
+    }, 80)
+    return () => clearTimeout(t)
+  }, [active])
+
+  /* browser back / forward between portfolio and case files */
+  useEffect(() => {
+    const onPop = () => {
+      const p = fromHash()
+      setActive(p)
+      if (p) scrollToTarget(0, { immediate: true })
+      else pending.current = window.location.hash.slice(1) || 'top'
     }
-    window.addEventListener('pointermove', move)
-    document.addEventListener('pointerleave', leave)
-    tick()
-    return () => { cancelAnimationFrame(raf); window.removeEventListener('pointermove', move); document.removeEventListener('pointerleave', leave) }
+    window.addEventListener('popstate', onPop)
+    return () => window.removeEventListener('popstate', onPop)
+  }, [])
+
+  /* ── hidden terminal: ` key, Konami code, five taps on the logo ── */
+  useEffect(() => {
+    let i = 0
+    const onKey = (e) => {
+      if (e.key === 'Escape') { setTermOpen(false); setMenuOpen(false); return }
+      const t = e.target
+      if (t instanceof HTMLElement && (t.closest('input,textarea,select') || t.isContentEditable)) return
+      if (e.key === '`' || e.key === '~' || e.code === 'Backquote') { e.preventDefault(); setTermOpen((o) => !o); return }
+      const k = e.key.length === 1 ? e.key.toLowerCase() : e.key
+      i = k === KONAMI[i] ? i + 1 : (k === KONAMI[0] ? 1 : 0)
+      if (i === KONAMI.length) { i = 0; setTermOpen(true); setTimeout(() => burst(), 250) }
+    }
+    window.addEventListener('keydown', onKey)
+    console.log('%cSS®%c  psst — press ` for a hidden terminal.', 'font:700 18px serif;color:#82978a', 'font:12px monospace;color:#77786d')
+    return () => window.removeEventListener('keydown', onKey)
   }, [])
 
   useEffect(() => {
-    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
-    const items = document.querySelectorAll('.magnetic')
-    const cleanups = []
-    items.forEach(item => {
-      const move = e => {
-        const r = item.getBoundingClientRect()
-        const dx = e.clientX - (r.left + r.width / 2)
-        const dy = e.clientY - (r.top + r.height / 2)
-        item.style.transform = `translate3d(${dx * .1}px,${dy * .13}px,0)`
-      }
-      const reset = () => { item.style.transform = '' }
-      item.addEventListener('pointermove', move)
-      item.addEventListener('pointerleave', reset)
-      cleanups.push(() => { item.removeEventListener('pointermove', move); item.removeEventListener('pointerleave', reset) })
-    })
-    return () => cleanups.forEach(fn => fn())
-  }, [active, activeFilter])
+    document.body.classList.toggle('term-open', termOpen)
+    if (!scroller.lenis) return
+    if (termOpen) scroller.lenis.stop()
+    else if (!document.body.classList.contains('intro-lock')) scroller.lenis.start()
+  }, [termOpen])
 
-  const closeMenu = () => setMenuOpen(false)
-  const openProject = (project) => { setActive(project); history.replaceState(null, '', `#project-${project.id}`); window.scrollTo({ top: 0, behavior: 'smooth' }) }
-  const closeProject = () => { setActive(null); history.replaceState(null, '', '#projects') }
-  return <main ref={root}>
-    <div className="scroll-progress" aria-hidden="true"><span /></div><div className="cursor-orb" aria-hidden="true"><i /></div>
-    <div className="intro-screen" ref={intro} aria-hidden="true"><div className="intro-top"><span>SS® / DIGITAL PRACTICE</span><span>INDEPENDENT CREATIVE TECHNOLOGIST</span></div><div className="intro-center"><div className="intro-mark">S<span>S</span><i>®</i></div><p>IDEAS BECOME INTERACTIONS.</p><div className="boot-track"><i className="boot-line" /></div><span className="boot-counter">INITIALISING EXPERIENCE / 100%</span></div><div className="intro-bottom"><span>CODE / FORM / MOTION</span><span>EST. 2026 — ALWAYS IN PROGRESS</span></div></div>
-    <div className="grain" />
-    <header className="nav-wrap"><nav className="nav shell"><a className="wordmark" href="#top" onClick={closeMenu}>SS<span>®</span></a><button className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle navigation">{menuOpen ? <X /> : <Menu />}</button><div className={`nav-links ${menuOpen ? 'open' : ''}`}><a href="#about" onClick={closeMenu}>ABOUT</a><a href="#work" onClick={closeMenu}>EXPERIMENTS</a><a href="#projects" onClick={closeMenu}>SELECTED WORK</a><a href="#toolkit" onClick={closeMenu}>TOOLKIT</a><a href="#contact" onClick={closeMenu}>CONTACT <ArrowUpRight size={13} /></a></div><span className="nav-status"><i /> AVAILABLE TO EXPLORE</span></nav></header>
-    {active ? <section className="case-page shell"><button className="back-link" onClick={closeProject}><ArrowLeft size={16} /> BACK TO PORTFOLIO</button><div className={`case-hero case-${active.accent}`}><span>{active.no} / CASE FILE — {active.category}</span><div className="case-symbol">{active.mark}</div><h1>{active.title}</h1><p>{active.subtitle}</p></div><div className="case-body"><div><span className="eyebrow">OVERVIEW / 01</span><h2>Making the idea <em>real.</em></h2></div><div><p>{active.description}</p><div className="case-stack">{active.stack.map(s => <span key={s}>{s}</span>)}</div><p className="case-note">This page is a structured case-study template. Add your final screenshots, demo link, repository and process notes when the project is ready to publish.</p></div></div><div className="case-next"><span>MORE WORK IN THE ARCHIVE</span><button onClick={closeProject}>RETURN TO ALL PROJECTS <ArrowUpRight size={16} /></button></div></section> : <>
-      <section className="hero shell" id="top"><div className="hero-copy"><p className="hero-kicker"><span /> INDEPENDENT CREATIVE TECHNOLOGIST <b> / 001</b></p><h1 className="hero-title">I make<br />ideas <em>move.</em></h1><p className="hero-description">I’m Shubhnit — exploring the space between code, design and digital experiences. I build software, shape 3D forms and turn concepts into motion.</p><div className="hero-actions"><a className="button button-dark magnetic" href="#projects">EXPLORE SELECTED WORK <ArrowUpRight size={16} /></a><a className="text-link" href="#about">GET TO KNOW ME <ArrowDown size={14} /></a></div><div className="hero-index"><span>BASED IN INDIA / WORKING EVERYWHERE</span><span>SCROLL TO EXPLORE ↓</span></div></div><div className="hero-art"><div className="art-orbit orbit-a" /><div className="art-orbit orbit-b" /><div className="art-core"><span>SS</span><i>®</i></div><div className="art-cross cross-a">✳</div><div className="art-cross cross-b">+</div><div className="art-label label-a">CREATIVE<br />TECHNOLOGY</div><div className="art-label label-b">CODE × FORM<br />× MOTION</div><div className="art-coordinate">DIGITAL<br />BY NATURE</div><span className="art-caption">FIG. 001 — A SYSTEM IN MOTION</span></div></section>
-      <div className="marquee"><div>{Array.from({ length: 4 }, (_, i) => <span key={i}>CODE <b>✳</b> DESIGN <b>✳</b> 3D <b>✳</b> MOTION <b>✳</b> INTERACTION <b>✳</b> EXPERIMENT <b>✳</b></span>)}</div></div>
-      <section className="about-section" id="about"><div className="shell about-grid"><div className="about-heading reveal"><p className="eyebrow">01 / A LITTLE CONTEXT</p><h2>Curiosity is<br />my <em>operating system.</em></h2><div className="visual-notes">
-        <img src={asset('creative-systems.svg')} alt="Abstract technical illustration connecting code, geometry and interactive systems" />
-        <img src={asset('spatial-blueprint.svg')} alt="Architectural blueprint-inspired illustration of a digital object and its geometry" />
-      </div><span className="image-caption">A VISUAL NOTE FROM THE WORKSHOP</span></div><div className="about-copy reveal"><p className="about-lead">I like making things that sit somewhere between useful and unexpected.</p><p>I’m a student and aspiring developer with a multidisciplinary creative practice. Programming gives me a way to build systems; 3D and visual design let me shape spaces and objects; editing and game design help me think about timing, interaction and story.</p><p>I’m currently learning by building — testing ideas, solving problems and connecting disciplines. This portfolio is a living record of that process, not a list of claims or finished milestones.</p><div className="principles"><div><b>01</b><span>THINK IN SYSTEMS</span><small>Break ideas into clear, workable parts.</small></div><div><b>02</b><span>MAKE IT TANGIBLE</span><small>Turn abstract thoughts into prototypes.</small></div><div><b>03</b><span>KEEP EXPERIMENTING</span><small>Learn through iteration and curiosity.</small></div></div></div></div></section>
-      <section className="work-section shell" id="work"><div className="section-head reveal"><div><p className="eyebrow">02 / FORM & DIMENSION</p><h2>Small worlds.<br /><em>Different angles.</em></h2></div><p>Blender explorations and procedural 3D studies. Interact with each object — drag to rotate, scroll to zoom.</p></div><div className="model-grid">{models.map((m, i) => <article className="model-card reveal" key={m.type}><div className="model-top"><span>0{i + 1} / 03</span><span>BLENDER — STUDY</span></div><ModelViewer model={m} index={i} /><div className="model-info"><h3>{m.label}</h3><p>{m.note}</p><span>INTERACTIVE / WEBGL</span></div></article>)}</div></section>
-      <section className="projects-section" id="projects"><div className="shell"><div className="section-head reveal"><div><p className="eyebrow">03 / SELECTED WORK</p><h2>Ideas taking<br /><em>shape.</em></h2></div><p>A growing collection across software, programming and visual storytelling. Select a project to open its case file.</p></div><div className="project-filters" role="group" aria-label="Filter projects">
-        {['ALL', 'CODE', 'VISUAL', 'INTERACTIVE'].map(filter => <button key={filter} className={activeFilter === filter ? 'filter-chip active' : 'filter-chip'} onClick={() => setActiveFilter(filter)}>{filter}</button>)}
-      </div><div className="project-grid">{projects.filter(p => activeFilter === 'ALL' || (activeFilter === 'CODE' && ['python', 'c'].includes(p.id)) || (activeFilter === 'VISUAL' && p.id === 'motion') || (activeFilter === 'INTERACTIVE' && p.id === 'game')).map(p => <button className={`project-tile tile-${p.accent} reveal magnetic`} key={p.id} onClick={() => openProject(p)}><div className="tile-top"><span>{p.no} / 04</span><span>{p.status}</span></div><div className="tile-art"><span className="tile-mark">{p.mark}</span><span className="tile-orbit" /><span className="tile-plus">↗</span></div><div className="tile-bottom"><div><span className="tile-category">{p.category}</span><h3>{p.title}</h3><p>{p.subtitle}</p></div><span className="tile-open"><ArrowUpRight size={18} /></span></div></button>)}</div><div className="archive-note reveal"><span>THE ARCHIVE IS OPEN-ENDED.</span><span>MORE EXPERIMENTS WILL FIND THEIR WAY HERE <Plus size={14} /></span></div></div></section>
-      <section className="toolkit-section shell" id="toolkit"><div className="section-head reveal"><div><p className="eyebrow">04 / CURRENT TOOLKIT</p><h2>Different tools.<br /><em>Shared curiosity.</em></h2></div><p>Technologies and creative disciplines I use, practise and continue to explore.</p></div><div className="toolkit-grid reveal"><div><Code2 /><span>01</span><h3>PYTHON</h3><small>PROGRAMMING</small></div><div><Code2 /><span>02</span><h3>C</h3><small>PROGRAMMING</small></div><div><Box /><span>03</span><h3>BLENDER</h3><small>3D / SPATIAL DESIGN</small></div><div><Clapperboard /><span>04</span><h3>VIDEO</h3><small>EDITING / STORY</small></div><div><Gamepad2 /><span>05</span><h3>GAME DESIGN</h3><small>INTERACTION / SYSTEMS</small></div><div><Code2 /><span>06</span><h3>WEB</h3><small>HTML / CSS / JAVASCRIPT</small></div></div></section>
-      <section className="contact-section shell" id="contact"><div className="contact-card reveal"><div className="contact-meta"><span>05 / OPEN CHANNEL</span><span>IDEAS ARE BETTER WHEN SHARED ↗</span></div><p className="eyebrow">HAVE SOMETHING INTERESTING IN MIND?</p><h2>Let’s make<br /><em>something matter.</em></h2><p className="contact-copy">For a conversation, collaboration or just to exchange ideas.</p><a className="contact-link magnetic" href="mailto:singhalshubhnit@gmail.com">singhalshubhnit@gmail.com <MoveUpRight size={19} /></a><div className="contact-foot"><span>SS® / DIGITAL PRACTICE</span><span>© 2026 SHUBHNIT SINGHAL</span><span>BUILT WITH CURIOSITY</span></div></div></section>
-      <footer className="footer shell"><span>SS® — CREATIVE TECHNOLOGIST</span><a href="#top">BACK TO THE TOP ↑</a><span>DESIGNED TO EXPLORE.</span></footer>
-    </>}
-  </main>
+  const onLogo = (e) => {
+    e.preventDefault()
+    const now = Date.now()
+    taps.current.n = now - taps.current.t < 1500 ? taps.current.n + 1 : 1
+    taps.current.t = now
+    if (taps.current.n >= 5) { taps.current.n = 0; setTermOpen(true); return }
+    goTo('top')
+  }
+
+  const terminalApi = useMemo(() => ({
+    openProject,
+    goTo,
+    setAccent: (name) => document.documentElement.style.setProperty('--accent', ACCENTS[name] || ACCENTS.sage),
+    spin: () => { sceneState.boost = 1 },
+    party: () => burst(),
+    glitch: () => glitch(),
+  }), [openProject, goTo])
+
+  const nextProject = active ? projects[(projects.findIndex((p) => p.id === active.id) + 1) % projects.length] : null
+
+  return (
+    <main ref={root}>
+      <div className="scroll-progress" aria-hidden="true"><span /></div>
+      <Cursor />
+      <TouchGlass />
+      <div className="curtain" ref={curtain} aria-hidden="true"><span className="curtain-label" /></div>
+
+      <div className="intro-screen" aria-hidden="true">
+        <div className="intro-top intro-meta"><span>SS® / DIGITAL PRACTICE</span><span>INDEPENDENT CREATIVE TECHNOLOGIST</span></div>
+        <div className="intro-center">
+          <div className="intro-mark">{['S', 'S', '®'].map((c, i) => <span className="mask" key={i}><span className={`ch ch${i}`}>{c}</span></span>)}</div>
+          <p className="intro-tag">IDEAS BECOME INTERACTIONS.</p>
+          <div className="boot-track"><i className="boot-line" /></div>
+          <div className="boot-readout"><span>LOADING EXPERIENCE</span><span className="boot-num">000</span></div>
+        </div>
+        <div className="intro-bottom intro-meta"><span>WEBGL · 60 FPS · 2026</span><span>EST. 2026 — ALWAYS IN PROGRESS</span></div>
+      </div>
+
+      <div className="grain" />
+
+      <header className="nav-wrap">
+        <nav className="nav glass" aria-label="Primary">
+          <a className="wordmark" href="#top" onClick={onLogo} data-cursor="HOME" aria-label="SS — home">SS<span>®</span></a>
+          <div className={`nav-links${menuOpen ? ' open' : ''}`}>
+            {NAV.map(([id, label]) => <a key={id} href={`#${id}`} data-target={id} onClick={go(id)}>{label}</a>)}
+            <a className="nav-cta" href="#contact" data-target="contact" onClick={go('contact')}>CONTACT <ArrowUpRight size={13} /></a>
+          </div>
+          <span className="nav-status"><i /> AVAILABLE TO EXPLORE</span>
+          <button className="menu-toggle" onClick={() => setMenuOpen((o) => !o)} aria-label="Toggle navigation" aria-expanded={menuOpen}>{menuOpen ? <X size={20} /> : <Menu size={20} />}</button>
+        </nav>
+      </header>
+
+      {active ? (
+        <CasePage project={active} next={nextProject} onBack={closeProject} onOpen={openProject} />
+      ) : (
+        <>
+          <Hero introDone={introDone} goTo={goTo} />
+          <Marquee />
+          <About />
+          <Work />
+          <Projects filter={filter} setFilter={setFilter} onOpen={openProject} />
+          <Toolkit />
+          <Contact />
+        </>
+      )}
+      <Footer onTerminal={() => setTermOpen(true)} goTo={goTo} />
+      <Terminal open={termOpen} onClose={() => setTermOpen(false)} api={terminalApi} />
+    </main>
+  )
 }
-export default App

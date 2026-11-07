@@ -1,56 +1,66 @@
-# SS® — Creative Technologist Portfolio
+# SS® — Creative Technologist Portfolio (v2)
 
-A responsive, motion-led portfolio for Shubhnit, built with React, Vite, GSAP, React Three Fiber, Drei and Lucide. The visual direction combines minimal editorial structure, a cinematic intro, an abstract CSS-built identity graphic, interactive 3D studies and expandable project case files.
+React 18 · Vite · GSAP + ScrollTrigger · Lenis · React Three Fiber · three.js
 
-## Run locally
+An editorial-meets-liquid-glass portfolio: a living shader field and mouse-reactive 3D orb in the hero,
+kinetic variable-weight typography, smooth inertial scrolling, a hidden terminal, and a client-friendly
+contact card with a built-in project brief.
 
-Install Node.js (LTS), then open Terminal in this folder:
+## Run it
 
 ```bash
 npm install
-npm run dev
+npm run dev        # http://localhost:5173
+npm run build      # outputs ./dist
+npm run preview    # test the production build locally
 ```
 
-Open the local URL printed by Vite. Before publishing, run:
+## Make it yours (one file: `src/data.js`)
 
-```bash
-npm run build
-npm run preview
-```
+| What | Where |
+| --- | --- |
+| Email address | `EMAIL` |
+| GitHub / LinkedIn / Instagram buttons (hidden until you add an `href`) | `SOCIALS` |
+| Project titles, copy, stack, status | `projects` |
+| "View source" / "Open demo" buttons on a case file | `projects[n].links.source` / `.demo` |
+| Brief / Process / Build / Reflection text on a case file | `projects[n].notes` (keys: `Brief`, `Process`, `Build`, `Reflection`) |
+| Terminal `theme` colours | `ACCENTS` |
 
-## Personalise the site
+### Replacing the placeholders with real work
 
-- Update the contact placeholder `YOUR.EMAIL@example.com` in `src/App.jsx`.
-- Edit the `projects` array near the top of `src/App.jsx` to change project titles, summaries, descriptions and tool tags.
-- Replace the procedural objects in the `Model` component with your own optimised Blender GLB exports when ready.
-- Replace the two illustrations in `public/images/` if you want a different visual mood.
-- The project case files are currently editable starter templates; add real screenshots, repository links, demos and process details as each project is ready. No achievements or project outcomes have been invented.
+* **Tile + case-file art** — the animated UI mock-ups are in `src/components/ProjectArt.jsx`. To use a real
+  screenshot, put the image in `public/images/` and, in `src/components/Sections.jsx` (tile) and
+  `src/components/CasePage.jsx` (gallery), swap `<ProjectArt … />` for an `<img>` that points at
+  `import.meta.env.BASE_URL + 'images/your-file.jpg'` (this keeps the path correct on GitHub Pages).
+* **3D studies** — the three procedural objects live in `src/components/Models.jsx`. Export a `.glb` from Blender,
+  place it in `public/models/`, and load it with `useGLTF` from `@react-three/drei`.
+* **Hero orb / background** — `src/components/HeroScene.jsx` (GLSL background + liquid orb).
 
-## Images and deployment path
+## Interaction notes
 
-Images are referenced with Vite's `import.meta.env.BASE_URL`, so they follow the configured deployment base path.
+* **Cursor (desktop):** a liquid-glass ring that stretches with speed, swells over links and shows a label for
+  anything tagged `data-cursor="LABEL"`.
+* **iPhone / touch:** no cursor — a spring-animated liquid-glass blob blooms under the finger. iOS also gets stronger
+  glass highlights and a quick-squeeze / springy-release press feel. The layout and features are identical on every device.
+* **Scrolling:** Lenis smooths mouse-wheel and trackpad scrolling. Touch screens keep the native momentum scroll
+  (it already feels right, especially on iOS).
+* **Hidden terminal:** press `` ` `` · enter the Konami code · or tap the **SS®** logo five times.
+  Try `help`, `ls`, `open python`, `theme clay`, `spin`, `party`, `glitch`.
+* **Shareable case files:** every project has a link such as `…/#project-python`.
+* **Accessibility:** `prefers-reduced-motion` turns off the intro, smooth scroll, cursor effects and heavy animation.
+  If WebGL is unavailable the 3D areas fall back gracefully instead of breaking the page.
+* WebGL canvases pause automatically when they are off-screen.
 
-For a GitHub Pages project repository such as `username.github.io/portfolio/`, set the Vite `base` in `vite.config.js` to `/portfolio/`. For a user/organisation site repository named `username.github.io`, keep `base: '/'`. The included GitHub Actions workflow builds `dist` and deploys it to GitHub Pages. In the repository, choose **Settings → Pages → Build and deployment → GitHub Actions**.
+## Deploy to GitHub Pages
 
-## Notes
+1. Push this folder to a GitHub repository (branch `main`).
+2. In the repo go to **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+3. Push — `.github/workflows/deploy.yml` builds and publishes automatically.
 
-- No portrait is used.
-- The 3D objects are procedural placeholders and can be rotated with mouse or touch.
-- The intro and scroll animations respect `prefers-reduced-motion`.
-- The email address is intentionally a placeholder. Replace it before publishing.
-- Google Fonts are loaded remotely; the system sans-serif fallback remains available if the fonts cannot load.
+Why it won't break on Pages:
 
-
-## Interaction and mobile updates
-
-This version adds:
-- A scroll progress indicator.
-- A desktop-only, physics-smoothed cursor follower and magnetic hover response.
-- Project category filters (All, Code, Visual, Interactive).
-- iOS/Safari touch-specific animation treatment and tap-target refinements.
-- Two custom, lightweight SVG editorial/technical illustrations replacing the previous raster collage assets.
-- Reduced-motion handling for the added effects.
-
-Run locally with `npm install` and `npm run dev`; create a production build with `npm run build`.
-
-The 3D gallery in this ZIP uses the existing procedural Three.js studies. No external `.glb` model was included in the uploaded ZIP, so this update preserves that working setup rather than introducing a missing-file dependency.
+* `vite.config.js` uses `base: './'`, so assets resolve correctly on both `username.github.io` and
+  `username.github.io/repo-name/`.
+* Navigation uses `#hash` links only, so there is no 404 fallback to configure.
+* No runtime downloads except Google Fonts — the 3D lighting is generated in code (no HDR files).
+* `public/.nojekyll` is included.
