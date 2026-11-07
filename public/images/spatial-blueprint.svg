@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" role="img">
+<defs><linearGradient id="paper" x2="1" y2="1"><stop stop-color="#e8e3d5"/><stop offset="1" stop-color="#d4d8cd"/></linearGradient><pattern id="bluegrid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#718b99" stroke-opacity=".24"/></pattern></defs>
+<rect width="900" height="520" fill="url(#paper)"/><rect width="900" height="520" fill="url(#bluegrid)"/>
+<g fill="none" stroke="#637f8c" stroke-width="2">
+ <path d="M175 365 350 125 620 185 700 360 440 425Z" fill="#aebfc1" fill-opacity=".24"/>
+ <path d="M175 365 440 425 440 180 350 125M440 180 620 185 700 360M350 125 440 180 620 185"/>
+ <path d="M350 125V55M620 185V75M175 365H85M700 360H810" stroke-dasharray="5 7"/>
+ <ellipse cx="440" cy="280" rx="260" ry="165" transform="rotate(-24 440 280)" stroke-dasharray="7 8"/>
+ <circle cx="440" cy="280" r="86" fill="#c88767" fill-opacity=".2" stroke="#b77e5e"/>
+ <path d="M440 194V366M354 280H526" stroke="#b77e5e"/>
+</g>
+<g fill="#3d555f" font-family="monospace"><text x="48" y="52" font-size="13" letter-spacing="3">FIG. 02 / SPATIAL BLUEPRINT</text><text x="48" y="482" font-size="11" letter-spacing="2">FORM STUDIES / DIMENSION / LIGHT</text><text x="715" y="482" font-size="10">SS / 001</text></g>
+<g fill="#b77e5e"><circle cx="350" cy="125" r="5"/><circle cx="620" cy="185" r="5"/><circle cx="700" cy="360" r="5"/></g>
+</svg>

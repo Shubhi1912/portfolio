@@ -39,3 +39,18 @@ For a GitHub Pages project repository such as `username.github.io/portfolio/`, s
 - The intro and scroll animations respect `prefers-reduced-motion`.
 - The email address is intentionally a placeholder. Replace it before publishing.
 - Google Fonts are loaded remotely; the system sans-serif fallback remains available if the fonts cannot load.
+
+
+## Interaction and mobile updates
+
+This version adds:
+- A scroll progress indicator.
+- A desktop-only, physics-smoothed cursor follower and magnetic hover response.
+- Project category filters (All, Code, Visual, Interactive).
+- iOS/Safari touch-specific animation treatment and tap-target refinements.
+- Two custom, lightweight SVG editorial/technical illustrations replacing the previous raster collage assets.
+- Reduced-motion handling for the added effects.
+
+Run locally with `npm install` and `npm run dev`; create a production build with `npm run build`.
+
+The 3D gallery in this ZIP uses the existing procedural Three.js studies. No external `.glb` model was included in the uploaded ZIP, so this update preserves that working setup rather than introducing a missing-file dependency.
