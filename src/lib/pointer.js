@@ -8,18 +8,24 @@ export const scroller = { lenis: null }
 export const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
 // Scrolls through Lenis when it is running, natively otherwise.
+// Lenis caches the page height and only refreshes it ~100 ms after a layout change, so we
+// force a re-measure first — otherwise a jump right after a view change gets clamped short.
 export function scrollToTarget(target, opts = {}) {
   const isNum = typeof target === 'number'
   const el = isNum ? null : (typeof target === 'string' ? document.querySelector(target) : target)
-  if (!isNum && !el) return
+  if (!isNum && !el) return false
   const { lenis } = scroller
   if (lenis) {
-    lenis.scrollTo(isNum ? target : el, { offset: isNum ? 0 : -84, duration: 1.4, ...opts })
+    if (typeof lenis.resize === 'function') lenis.resize()
+    else if (lenis.dimensions && typeof lenis.dimensions.resize === 'function') lenis.dimensions.resize()
+    // force: Lenis ignores scrollTo while stopped (terminal open / intro) — explicit navigation must still work
+    lenis.scrollTo(isNum ? target : el, { offset: isNum ? 0 : -84, duration: 1.4, force: true, ...opts })
   } else if (isNum) {
     window.scrollTo({ top: target, behavior: opts.immediate ? 'instant' : 'smooth' })
   } else {
     window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 84, behavior: opts.immediate ? 'instant' : 'smooth' })
   }
+  return true
 }
 
 // One delegated listener drives: pointer physics, glass spotlight (.fx-track),

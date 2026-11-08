@@ -63,7 +63,7 @@ export function Contact() {
 
         <div className="contact-grid">
           <div className="contact-main" data-reveal>
-            <p className="contact-copy">For a conversation, a collaboration, a client project or just to exchange ideas. Write directly, or sketch the brief on the right and I’ll get the email ready for you.</p>
+            <p className="contact-copy">For a conversation, a collaboration or a client project. Write directly, or sketch the brief and I’ll prepare the email.</p>
             <a className="mail-big magnetic" href={`mailto:${EMAIL}`} data-cursor="WRITE" aria-label={`Email ${EMAIL}`}>
               {[...EMAIL].map((ch, i) => <span key={i} aria-hidden="true">{ch}</span>)}
             </a>
@@ -72,8 +72,8 @@ export function Contact() {
               {socials.map((s) => <a key={s.label} className="social-chip glass-dark" href={s.href} target="_blank" rel="noreferrer">{s.label.toUpperCase()}</a>)}
             </div>
             <ul className="contact-notes">
-              <li><b>Replies</b><span>I’ll answer every genuine message.</span></li>
-              <li><b>Good fits</b><span>Websites, interactive pieces, 3D visuals, short video edits, game ideas.</span></li>
+              <li><b>Replies</b><span>Every genuine message gets an answer.</span></li>
+              <li><b>Good fits</b><span>Websites, interactive pieces, 3D, video edits, game ideas.</span></li>
             </ul>
           </div>
 

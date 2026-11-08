@@ -109,7 +109,7 @@ export function ModelViewer({ type, index }) {
         </Suspense>
         <OrbitControls enablePan={false} enableZoom={false} rotateSpeed={0.7} />
       </SafeCanvas>
-      <span className="model-hint glass">DRAG SIDEWAYS TO ROTATE</span>
+      <span className="model-hint glass">DRAG TO ROTATE</span>
     </div>
   )
 }

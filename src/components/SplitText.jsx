@@ -47,7 +47,7 @@ export function KineticTitle({ active }) {
     measure()
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure)
     window.addEventListener('resize', measure)
-    const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting })
+    const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible) measure() })
     io.observe(root)
 
     const tick = (time) => {

@@ -1,11 +1,11 @@
 // ─────────────────────────────────────────────────────────────
 //  EDIT ME — everything you will want to personalise lives here.
 // ─────────────────────────────────────────────────────────────
-export const EMAIL = 'singhalshubhnit@example.com'
+export const EMAIL = 'YOUR.EMAIL@example.com'
 
 // Add an href to show a social link in the contact card. Empty ones stay hidden.
 export const SOCIALS = [
-  { label: 'GitHub', href: 'https://github.com/Shubhi1912' },
+  { label: 'GitHub', href: '' },
   { label: 'LinkedIn', href: '' },
   { label: 'Instagram', href: '' },
 ]

@@ -38,15 +38,21 @@ npm run preview    # test the production build locally
 
 ## Interaction notes
 
-* **Cursor (desktop):** a liquid-glass ring that stretches with speed, swells over links and shows a label for
+* **Loading scene:** about 5 seconds — logo, a live 000→100 counter with changing status text, then a wipe into the hero.
+* **Cursor (desktop):** a soft liquid-glass ring that stretches with speed, swells over links and shows a label for
   anything tagged `data-cursor="LABEL"`.
-* **iPhone / touch:** no cursor — a spring-animated liquid-glass blob blooms under the finger. iOS also gets stronger
-  glass highlights and a quick-squeeze / springy-release press feel. The layout and features are identical on every device.
+* **Glass:** every device gets a light, restrained glass look. **iPhone / iPad only** get the richer native-style
+  liquid glass — deeper blur, inner glow and a rim-light edge, plus a larger spring-animated blob under the finger
+  (Android gets a smaller, subtler one). The layout and features are identical on every device.
 * **Scrolling:** Lenis smooths mouse-wheel and trackpad scrolling. Touch screens keep the native momentum scroll
   (it already feels right, especially on iOS).
 * **Hidden terminal:** press `` ` `` · enter the Konami code · or tap the **SS®** logo five times.
-  Try `help`, `ls`, `open python`, `theme clay`, `spin`, `party`, `glitch`.
-* **Shareable case files:** every project has a link such as `…/#project-python`.
+  Try `help`, `ls`, `open python`, `goto contact`, `theme clay`, `spin`, `party`, `glitch`.
+  Commands that act on the website (`open`, `goto`, `theme`, `spin`, `party`, `glitch`) close the terminal first so you
+  can see the result; info commands (`help`, `ls`, `about`, …) keep it open. `Esc` always closes it.
+* **Case files:** every project has a shareable link such as `…/#project-python`. The portfolio stays mounted while a case
+  file is open, so going back is instant and returns you to exactly where you were; the nav links, logo, footer link
+  and browser Back/Forward all route correctly from a case file.
 * **Accessibility:** `prefers-reduced-motion` turns off the intro, smooth scroll, cursor effects and heavy animation.
   If WebGL is unavailable the 3D areas fall back gracefully instead of breaking the page.
 * WebGL canvases pause automatically when they are off-screen.

@@ -45,9 +45,9 @@ export function Hero({ introDone, goTo }) {
 
       <div className="shell hero-inner">
         <div className="hero-copy">
-          <p className="hero-kicker"><span /> INDEPENDENT CREATIVE TECHNOLOGIST <b> / 001</b></p>
+          <p className="hero-kicker"><span /> CREATIVE TECHNOLOGIST <b> / 001</b></p>
           <KineticTitle active={introDone} />
-          <p className="hero-description">I’m Shubhnit — exploring the space between code, design and digital experiences. I build software, shape 3D forms and turn concepts into motion.</p>
+          <p className="hero-description">I’m Shubhnit. I build software, shape 3D forms and turn ideas into motion.</p>
           <div className="hero-actions">
             <a className="button button-dark magnetic" href="#projects" onClick={(e) => { e.preventDefault(); goTo('projects') }}>EXPLORE SELECTED WORK <ArrowUpRight size={16} /></a>
             <a className="text-link" href="#about" onClick={(e) => { e.preventDefault(); goTo('about') }}>GET TO KNOW ME <ArrowDown size={14} /></a>

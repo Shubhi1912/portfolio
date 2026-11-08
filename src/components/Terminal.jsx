@@ -11,7 +11,7 @@ const HELP = [
   ['contact', 'print the email address'],
   ['goto <section>', 'jump to ' + SECTIONS.join(' · ')],
   ['theme <name>', 'sage · clay · slate · lilac · reset'],
-  ['spin', 'wake up the orb'],
+  ['spin', 'wake up the hero orb'],
   ['party', 'little celebration'],
   ['glitch', 'break the page, briefly'],
   ['date', 'local time in India'],
@@ -46,6 +46,9 @@ export function Terminal({ open, onClose, api }) {
 
   const print = (...rows) => setLines((cur) => [...cur, ...rows.map((r) => (typeof r === 'string' ? line('out', r) : r))].slice(-200))
 
+  // Commands that act on the website close the terminal first, then fire — so you actually see the effect.
+  const act = (fn, wait = 550, after = 320) => setTimeout(() => { onClose(); setTimeout(fn, after) }, wait)
+
   const run = (raw) => {
     const text = raw.trim()
     if (!text) return
@@ -71,7 +74,7 @@ export function Terminal({ open, onClose, api }) {
         const p = projects.find((x) => x.id === arg || x.no === arg)
         if (!p) { print(echo, line('err', `no such case file: "${arg || ''}" — try "ls"`)); break }
         print(echo, `opening ${p.title}…`)
-        setTimeout(() => { onClose(); api.openProject(p) }, 350)
+        act(() => api.openProject(p), 400, 0)
         break
       }
       case 'skills':
@@ -84,27 +87,27 @@ export function Terminal({ open, onClose, api }) {
         const id = arg === 'top' || SECTIONS.includes(arg) ? arg : null
         if (!id) { print(echo, line('err', `unknown section — try: top, ${SECTIONS.join(', ')}`)); break }
         print(echo, `scrolling to ${id}…`)
-        setTimeout(() => { onClose(); api.goTo(id) }, 300)
+        act(() => api.goTo(id), 350, 0)
         break
       }
       case 'theme': {
-        if (arg === 'reset') { api.setAccent('sage'); print(echo, 'accent reset to sage.'); break }
+        if (arg === 'reset') { print(echo, 'accent reset to sage.'); act(() => api.setAccent('sage')); break }
         if (!ACCENTS[arg]) { print(echo, line('err', `themes: ${Object.keys(ACCENTS).join(', ')}, reset`)); break }
-        api.setAccent(arg)
         print(echo, `accent → ${arg}`)
+        act(() => api.setAccent(arg))
         break
       }
       case 'spin':
-        api.spin()
-        print(echo, 'spinning up the orb. close this window to watch it.')
+        print(echo, 'spinning up the orb…')
+        act(() => { api.goTo('top'); setTimeout(api.spin, 450) })
         break
       case 'party':
-        api.party()
         print(echo, '✳ + ® ◆ ●')
+        act(() => api.party())
         break
       case 'glitch':
-        api.glitch()
-        print(echo, 'ƒ̷a̷u̷l̷t̷ ̷s̷i̷m̷u̷l̷a̷t̷e̷d̷ — nothing was harmed.')
+        print(echo, 'fault simulated — nothing was harmed.')
+        act(() => api.glitch())
         break
       case 'date':
         print(echo, new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kolkata', dateStyle: 'full', timeStyle: 'short' }).format(new Date()) + ' IST')
