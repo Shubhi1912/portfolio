@@ -67,6 +67,9 @@
 .model-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
 .model-top{display:flex;justify-content:space-between;font:500 10px var(--mono);letter-spacing:.1em;color:var(--muted);margin-bottom:12px}
 .model-stage{position:relative;height:370px;border-radius:28px;overflow:hidden;border:1px solid var(--line);box-shadow:inset 0 1px 0 rgba(255,255,255,.7)}
+.model-deferred{position:relative;height:370px;border-radius:28px;overflow:hidden}
+.model-deferred .model-fallback{position:relative;min-height:100%;}
+.case-model-loading{display:grid;place-items:center;min-height:370px;color:var(--muted);font:500 10px var(--mono);letter-spacing:.1em}
 .model-0{background:radial-gradient(circle at 50% 38%,#f2eee2,#dedacb)}
 .model-1{background:radial-gradient(circle at 50% 38%,#efe4d8,#dccdbd)}
 .model-2{background:radial-gradient(circle at 50% 38%,#e6ebea,#d2d9d7)}
@@ -82,6 +85,12 @@
 .model-info h3{font:500 22px/1.1 var(--display);letter-spacing:-.015em;margin:0 0 9px}
 .model-info p{font-size:14px;line-height:1.6;color:var(--muted);margin:0 0 14px}
 .model-info span{font:500 10px var(--mono);letter-spacing:.1em;color:var(--sage-deep)}
+.model-info button{padding:10px 0;border:0;background:none;color:var(--sage-deep);font:500 10px var(--mono);letter-spacing:.1em;cursor:pointer;min-height:40px}
+.model-info button:hover{color:var(--ink)}
+.case-model-panel{grid-column:1/-1;margin:0;border:1px solid var(--line);border-radius:28px;overflow:hidden;background:radial-gradient(circle at 50% 38%,#eee9dc,#d9d5c8)}
+.case-model-panel .model-stage{height:min(68vw,650px);min-height:320px;border:0;border-radius:0;box-shadow:none;background:transparent}
+.case-model-panel figcaption{padding:14px 20px;color:var(--muted);font:500 10px var(--mono);letter-spacing:.1em}
+.case-model-caption{padding:14px 20px 0;color:var(--sage-deep);font:500 10px var(--mono);letter-spacing:.1em}
 
 /* ───────── Projects ───────── */
 .projects-section{background-color:var(--ink);color:var(--paper);padding:130px 0 120px;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:56px 56px}
@@ -255,7 +264,7 @@
 }
 @media (max-width:1024px){
   .model-grid{grid-template-columns:1fr}
-  .model-stage{height:340px}
+  .model-stage,.model-deferred{height:340px}
   .toolkit-grid{grid-template-columns:repeat(2,1fr)}
   .case-process ol{grid-template-columns:repeat(2,1fr)}
 }
@@ -284,7 +293,7 @@
 }
 @media (max-width:560px){
   .model-grid{gap:28px}
-  .model-stage{height:clamp(270px,82vw,340px);border-radius:24px}
+  .model-stage,.model-deferred{height:clamp(270px,82vw,340px);border-radius:24px}
   .model-hint{left:10px;bottom:10px;max-width:calc(100% - 112px);font-size:8px;letter-spacing:.07em}
   .model-reset{right:10px;bottom:8px;min-height:42px}
 }

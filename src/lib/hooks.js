@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react'
 
 // True while the element is on (or near) the screen. Used to pause WebGL when off-screen.
 export function useInView(ref, margin = '0px') {
-  const [visible, setVisible] = useState(true)
+  const [visible, setVisible] = useState(false)
   useEffect(() => {
     const el = ref.current
-    if (!el || !('IntersectionObserver' in window)) return
+    if (!el) return
+    if (!('IntersectionObserver' in window)) { setVisible(true); return }
     const io = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting), { rootMargin: margin })
     io.observe(el)
     return () => io.disconnect()

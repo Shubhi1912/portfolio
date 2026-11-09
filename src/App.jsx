@@ -381,7 +381,7 @@ export default function App() {
         <Hero introDone={introDone} goTo={goTo} />
         <Marquee />
         <About />
-        <Work />
+        <Work onOpen={openProject} />
         <Projects filter={filter} setFilter={setFilter} onOpen={openProject} />
         <Toolkit />
         <Contact />

@@ -1,8 +1,10 @@
-import React from 'react'
+import React, { lazy, Suspense } from 'react'
 import { ArrowLeft, ArrowUpRight, Github, Play } from 'lucide-react'
 import { Headline } from './SplitText'
 import { ProjectArt } from './ProjectArt'
 import { processSteps } from '../data'
+
+const ModelViewer = lazy(() => import('./Models').then((module) => ({ default: module.ModelViewer })))
 
 export function CasePage({ project, next, onBack, onOpen }) {
   const { source, demo } = project.links || {}
@@ -38,12 +40,13 @@ export function CasePage({ project, next, onBack, onOpen }) {
       </div>
 
       <div className="case-gallery">
-        <figure className={`g-main ac-${project.accent} tilt fx-track`} data-clip>
+        {project.modelUrl && <figure className="case-model-panel" data-clip><div className="case-model-caption">INTERACTIVE MODEL · DRAG TO ROTATE · PINCH TO ZOOM</div><Suspense fallback={<div className="case-model-loading">PREPARING 3D VIEW</div>}><ModelViewer url={project.modelUrl} index={0} /></Suspense><figcaption>{project.title} — interactive 3D view</figcaption></figure>}
+        {!project.modelUrl && <><figure className={`g-main ac-${project.accent} tilt fx-track`} data-clip>
           <ProjectArt id={project.id} large />
           <figcaption className="glass">PLACEHOLDER · REPLACE WITH A SCREENSHOT</figcaption>
         </figure>
         <figure className="g-ph tilt fx-track" data-clip><span>DROP IN A SCREENSHOT</span><small>02</small></figure>
-        <figure className="g-ph wide tilt fx-track" data-clip><span>DEMO CLIP OR PROCESS SKETCH</span><small>03</small></figure>
+        <figure className="g-ph wide tilt fx-track" data-clip><span>DEMO CLIP OR PROCESS SKETCH</span><small>03</small></figure></>}
       </div>
 
       <div className="case-process">

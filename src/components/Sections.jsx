@@ -1,7 +1,6 @@
-import React from 'react'
+import React, { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { ArrowUpRight, Plus, Terminal, Cpu, Box, Clapperboard, Gamepad2, Globe } from 'lucide-react'
 import { Headline } from './SplitText'
-import { ModelViewer } from './Models'
 import { ProjectArt } from './ProjectArt'
 import { projects, models, toolkit } from '../data'
 import { useClock } from '../lib/hooks'
@@ -9,6 +8,23 @@ import { useClock } from '../lib/hooks'
 const asset = (name) => `${import.meta.env.BASE_URL}images/${name}`
 const ICONS = { Terminal, Cpu, Box, Clapperboard, Gamepad2, Globe }
 const FILTERS = ['ALL', 'CODE', 'VISUAL', 'INTERACTIVE']
+const ModelViewer = lazy(() => import('./Models').then((module) => ({ default: module.ModelViewer })))
+
+function DeferredModel({ model, index }) {
+  const host = useRef(null)
+  const [near, setNear] = useState(false)
+  useEffect(() => {
+    const el = host.current
+    if (!el) return
+    if (!('IntersectionObserver' in window)) { setNear(true); return }
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) { setNear(true); observer.disconnect() }
+    }, { rootMargin: '80px' })
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+  return <div ref={host} className="model-deferred">{near ? <Suspense fallback={<div className="model-fallback">PREPARING 3D VIEW</div>}><ModelViewer index={index} url={model.url} /></Suspense> : <div className="model-fallback">3D VIEW LOADS ON APPROACH</div>}</div>
+}
 
 export function About() {
   return (
@@ -42,7 +58,7 @@ export function About() {
   )
 }
 
-export function Work() {
+export function Work({ onOpen }) {
   return (
     <section className="work-section shell" id="work">
       <div className="section-head">
@@ -50,14 +66,14 @@ export function Work() {
           <p className="eyebrow" data-reveal>02 / FORM & DIMENSION</p>
           <Headline text={'Small worlds.\n*Different angles.*'} />
         </div>
-        <p data-reveal>Procedural 3D studies. Drag an object sideways to turn it.</p>
+        <p data-reveal>Selected Blender work. Drag to rotate, pinch to zoom, or reset the view.</p>
       </div>
       <div className="model-grid">
         {models.map((m, i) => (
           <article className="model-card" key={m.type} data-reveal>
-            <div className="model-top"><span>0{i + 1} / 03</span><span>BLENDER — STUDY</span></div>
-            <ModelViewer type={m.type} index={i} />
-            <div className="model-info"><h3>{m.label}</h3><p>{m.note}</p><span>INTERACTIVE / WEBGL</span></div>
+            <div className="model-top"><span>0{i + 1} / {String(models.length).padStart(2, '0')}</span><span>BLENDER — 3D WORK</span></div>
+            <DeferredModel model={m} index={i} />
+            <div className="model-info"><h3>{m.label}</h3><p>{m.note}</p><button type="button" onClick={() => onOpen(projects.find((p) => p.id === m.projectId))}>VIEW CASE STUDY ↗</button></div>
           </article>
         ))}
       </div>
@@ -90,7 +106,7 @@ export function Projects({ filter, setFilter, onOpen }) {
               <div className="tile-art">
                 <ProjectArt id={p.id} />
                 <span className="tile-mark">{p.mark}</span>
-                <span className="ph-badge glass">PLACEHOLDER</span>
+                <span className="ph-badge glass">{p.modelUrl ? 'INTERACTIVE 3D' : 'PLACEHOLDER'}</span>
               </div>
               <div className="tile-bottom">
                 <div><span className="tile-category">{p.category}</span><h3>{p.title}</h3><p>{p.subtitle}</p></div>

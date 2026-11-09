@@ -23,6 +23,8 @@ export const projects = [
   { id: 'c', no: '02', group: 'CODE', category: 'PROGRAMMING / C', title: 'Logic in motion', subtitle: 'Learning to think close to the machine.', description: 'A collection of C programming exercises and small console experiments focused on fundamentals: input, control flow, arrays, functions and problem-solving. Add a specific finished program and its source link here when ready.', stack: ['C', 'Problem solving', 'Terminal'], accent: 'blue', color: '#9eafbd', mark: 'C', status: 'LEARNING LOG', links: { source: '', demo: '' }, notes: {} },
   { id: 'motion', no: '03', group: 'VISUAL', category: 'MOTION / VIDEO', title: 'Frames & feeling', subtitle: 'Editing ideas into a visual rhythm.', description: 'A home for selected video edits. Document the creative brief, pacing, transitions, sound choices and editing process here. Replace this preview with a still or embedded video when you have a final piece to share.', stack: ['DaVinci Resolve', 'Editing', 'Storytelling'], accent: 'orange', color: '#c88767', mark: '▶', status: 'SHOWREEL SLOT', links: { source: '', demo: '' }, notes: {} },
   { id: 'game', no: '04', group: 'INTERACTIVE', category: 'INTERACTIVE / GAME DESIGN', title: 'Playful systems', subtitle: 'Mechanics, rules and little worlds.', description: 'An evolving space for game concepts and interactive prototypes. Add the core loop, rules, player choices, visual direction and a playable build when a project is ready to be presented.', stack: ['Game design', 'Prototyping', 'Systems'], accent: 'violet', color: '#b3a6c6', mark: 'PLAY', status: 'IN DEVELOPMENT', links: { source: '', demo: '' }, notes: {} },
+  { id: 'harry-potter-book-one', no: '05', group: 'VISUAL', category: '3D / PROP DESIGN', title: 'Harry Potter — Book One', subtitle: 'A detailed 3D study of the first completed book.', description: 'An interactive, textured 3D model of the completed first volume. Rotate the book to inspect its cover and form.', stack: ['Blender', '3D modeling', 'Texturing'], accent: 'violet', color: '#b3a6c6', mark: '01', status: '3D MODEL', modelUrl: 'models/harry-potter-books.glb', links: { source: '', demo: '' }, notes: {} },
+  { id: 'cosmic-punk', no: '06', group: 'VISUAL', category: '3D / CHARACTER DESIGN', title: 'Cosmic Punk', subtitle: 'A character study built for close inspection.', description: 'An interactive, textured 3D presentation of a Cosmic Punk character study.', stack: ['Blender', 'Character design', 'Texturing'], accent: 'blue', color: '#9eafbd', mark: 'CP', status: '3D MODEL', modelUrl: 'models/cosmic-punk.glb', links: { source: '', demo: '' }, notes: {} },
 ]
 
 export const processSteps = [
@@ -33,9 +35,8 @@ export const processSteps = [
 ]
 
 export const models = [
-  { type: 'orbital', label: 'ORBITAL STUDY', note: 'A sculptural form exploring scale and atmosphere.' },
-  { type: 'form', label: 'FORM / MATTER', note: 'A study of silhouette, material and studio light.' },
-  { type: 'kinetic', label: 'KINETIC OBJECT', note: 'A conceptual object built around rhythm and motion.' },
+  { label: 'Harry Potter — Book One', note: 'The first completed volume, with its cover and book form preserved.', url: 'models/harry-potter-books.glb', projectId: 'harry-potter-book-one' },
+  { label: 'Cosmic Punk', note: 'A textured character study, ready to explore from every angle.', url: 'models/cosmic-punk.glb', projectId: 'cosmic-punk' },
 ]
 
 export const toolkit = [
