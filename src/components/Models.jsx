@@ -1,6 +1,7 @@
 import React, { Suspense, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Float, OrbitControls } from '@react-three/drei'
+import { RotateCcw } from 'lucide-react'
 import { SafeCanvas, StudioEnv } from './SafeCanvas'
 import { useInView } from '../lib/hooks'
 
@@ -88,6 +89,7 @@ const BY_TYPE = { orbital: Orbital, form: FormMatter, kinetic: Kinetic }
 
 export function ModelViewer({ type, index }) {
   const box = useRef(null)
+  const controls = useRef(null)
   const inView = useInView(box, '160px')
   const Piece = BY_TYPE[type] || Orbital
   return (
@@ -107,9 +109,22 @@ export function ModelViewer({ type, index }) {
           </Float>
           <StudioEnv />
         </Suspense>
-        <OrbitControls enablePan={false} enableZoom={false} rotateSpeed={0.7} />
+        <OrbitControls
+          ref={controls}
+          enablePan={false}
+          enableZoom
+          minDistance={3.1}
+          maxDistance={7}
+          rotateSpeed={0.7}
+          autoRotate
+          autoRotateSpeed={0.45}
+          onStart={() => { if (controls.current) controls.current.autoRotate = false }}
+        />
       </SafeCanvas>
-      <span className="model-hint glass">DRAG TO ROTATE</span>
+      <span className="model-hint glass">DRAG TO ROTATE · PINCH TO ZOOM</span>
+      <button className="model-reset" type="button" aria-label="Reset 3D view" title="Reset view" onClick={() => controls.current?.reset()}>
+        <RotateCcw size={15} /><span>RESET</span>
+      </button>
     </div>
   )
 }

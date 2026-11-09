@@ -72,9 +72,12 @@
 .model-2{background:radial-gradient(circle at 50% 38%,#e6ebea,#d2d9d7)}
 .model-stage canvas{display:block;cursor:grab}
 /* OrbitControls writes touch-action on a wrapper, so cover every descendant: sideways = rotate, vertical = scroll the page */
-.model-stage,.model-stage *{touch-action:pan-y!important}
+.model-stage,.model-stage canvas{touch-action:pan-y!important}
 .model-fallback{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:20px;font:500 10px var(--mono);letter-spacing:.1em;color:var(--muted)}
 .model-hint{position:absolute;left:14px;bottom:14px;padding:8px 13px;border-radius:999px;font:500 9px var(--mono);letter-spacing:.12em;pointer-events:none}
+.model-reset{position:absolute;right:14px;bottom:12px;z-index:2;display:flex;align-items:center;gap:7px;min-height:40px;padding:0 13px;border:1px solid rgba(37,39,32,.14);border-radius:999px;background:rgba(248,246,239,.88);color:var(--ink);font:500 9px var(--mono);letter-spacing:.1em;cursor:pointer;box-shadow:0 4px 14px rgba(37,39,32,.08);transition:background .2s,transform .2s}
+.model-reset:hover{background:#fff}
+.model-reset:active{transform:scale(.96)}
 .model-info{padding:20px 4px 0}
 .model-info h3{font:500 22px/1.1 var(--display);letter-spacing:-.015em;margin:0 0 9px}
 .model-info p{font-size:14px;line-height:1.6;color:var(--muted);margin:0 0 14px}
@@ -278,6 +281,12 @@
   .case-body{grid-template-columns:1fr}
   .case-gallery{grid-template-columns:1fr}
   .case-page{padding-top:104px}
+}
+@media (max-width:560px){
+  .model-grid{gap:28px}
+  .model-stage{height:clamp(270px,82vw,340px);border-radius:24px}
+  .model-hint{left:10px;bottom:10px;max-width:calc(100% - 112px);font-size:8px;letter-spacing:.07em}
+  .model-reset{right:10px;bottom:8px;min-height:42px}
 }
 @media (max-width:560px){
   .toolkit-grid{grid-template-columns:1fr}
